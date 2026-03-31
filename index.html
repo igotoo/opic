@@ -1,2296 +1,454 @@
 <!doctype html>
 <html lang="ko">
-    <head>
-        <meta charset="UTF-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-        />
-        <title>OPIc 72 Master AI - JOON</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-        <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-        <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-        <style>
-            @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap");
-            body {
-                font-family: "Inter", sans-serif;
-                -webkit-tap-highlight-color: transparent;
-            }
-            .no-scrollbar::-webkit-scrollbar {
-                display: none;
-            }
-            .no-scrollbar {
-                -ms-overflow-style: none;
-                scrollbar-width: none;
-            }
-            .perspective-1000 {
-                perspective: 1000px;
-            }
-            .transform-style-3d {
-                transform-style: preserve-3d;
-            }
-            .backface-hidden {
-                backface-visibility: hidden;
-            }
-            .rotate-y-180 {
-                transform: rotateY(180deg);
-            }
-            .custom-scrollbar::-webkit-scrollbar {
-                width: 4px;
-            }
-            .custom-scrollbar::-webkit-scrollbar-track {
-                background: transparent;
-            }
-            .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: #334155;
-                border-radius: 10px;
-            }
-            @keyframes shimmer {
-                0% {
-                    background-position: -200% 0;
-                }
-                100% {
-                    background-position: 200% 0;
-                }
-            }
-            .animate-shimmer {
-                background: linear-gradient(
-                    90deg,
-                    #f3f4f6 25%,
-                    #e5e7eb 50%,
-                    #f3f4f6 75%
-                );
-                background-size: 200% 100%;
-                animation: shimmer 1.5s infinite linear;
-            }
-        </style>
-    </head>
-    <body class="bg-slate-50">
-        <div id="root"></div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPIc 72 JOON</title>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --text: #0f172a;
+      --muted: #64748b;
+      --muted2: #94a3b8;
+      --card: #ffffff;
+      --card-dark: #0f172a;
+      --line: #e2e8f0;
+      --emerald: #059669;
+      --emerald-2: #10b981;
+      --emerald-3: #d1fae5;
+      --yellow: #facc15;
+      --slate-100: #f1f5f9;
+      --slate-200: #e2e8f0;
+      --slate-300: #cbd5e1;
+      --slate-500: #64748b;
+      --slate-700: #334155;
+      --slate-800: #1e293b;
+      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+      --shadow-lg: 0 20px 45px rgba(15, 23, 42, .12);
+      --radius-xl: 24px;
+      --radius-2xl: 32px;
+      --radius-3xl: 40px;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans KR", sans-serif; }
+    body { padding: 16px 16px 120px; }
+    .app { max-width: 760px; margin: 0 auto; }
+    .row { display: flex; align-items: center; }
+    .between { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .header { margin-bottom: 24px; }
+    .logo { display: flex; align-items: center; gap: 12px; }
+    .logo-badge {
+      width: 52px; height: 52px; border-radius: 18px; background: var(--emerald);
+      color: white; display: grid; place-items: center; box-shadow: var(--shadow-lg); font-size: 26px;
+    }
+    .title { font-size: 32px; font-weight: 900; letter-spacing: -0.04em; font-style: italic; margin: 0; }
+    .title span { color: var(--emerald); }
+    .fav-btn, .day-btn, .action-btn, .mini-btn, .ghost-btn {
+      border: 1px solid transparent; background: white; cursor: pointer; transition: .2s ease;
+    }
+    .fav-btn {
+      display: inline-flex; align-items: center; gap: 8px; padding: 12px 16px; border-radius: 999px;
+      font-weight: 800; box-shadow: var(--shadow); color: var(--muted);
+    }
+    .fav-btn.active { background: var(--yellow); color: white; border-color: #fde68a; }
+    .days { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 24px; scrollbar-width: none; }
+    .days::-webkit-scrollbar { display: none; }
+    .day-btn {
+      flex: 0 0 auto; padding: 12px 18px; border-radius: 18px; font-size: 14px; font-weight: 900;
+      color: var(--slate-500); border-color: #e5e7eb; box-shadow: var(--shadow);
+    }
+    .day-btn.active { background: var(--slate-800); color: white; }
+    .info-box {
+      background: var(--card); border: 1px solid #f1f5f9; border-radius: 28px; padding: 20px; margin-bottom: 24px; box-shadow: var(--shadow);
+    }
+    .label { font-size: 10px; font-weight: 900; letter-spacing: .25em; color: var(--emerald); text-transform: uppercase; margin-bottom: 6px; }
+    .subtitle { margin: 0; font-size: 22px; font-weight: 900; }
+    .count { color: var(--muted2); font-weight: 900; font-variant-numeric: tabular-nums; }
+    .progress-wrap { width: 100%; height: 10px; background: var(--slate-100); border-radius: 999px; overflow: hidden; margin-top: 12px; }
+    .progress-bar { height: 100%; background: var(--emerald-2); width: 0%; transition: width .5s ease; }
 
-        <script type="text/babel">
-            (function () {
-                "use strict";
-                const { useState, useMemo, useEffect } = React;
+    .card-wrap { position: relative; width: 100%; height: 580px; perspective: 1000px; }
+    .card-3d { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform .7s ease; cursor: pointer; }
+    .card-3d.flipped { transform: rotateY(180deg); }
+    .card-face {
+      position: absolute; inset: 0; backface-visibility: hidden; border-radius: 40px; overflow: hidden;
+      box-shadow: var(--shadow-lg); border: 1px solid #f1f5f9;
+    }
+    .card-front {
+      background: white; display: flex; flex-direction: column; align-items: center; justify-content: center;
+      text-align: center; padding: 36px 28px;
+    }
+    .front-tag {
+      position: absolute; top: 28px; left: 28px; background: #ecfdf5; color: var(--emerald);
+      border-radius: 999px; padding: 8px 12px; font-size: 11px; font-weight: 900;
+    }
+    .focus { font-size: 12px; font-weight: 900; letter-spacing: .4em; color: var(--slate-300); text-transform: uppercase; margin-bottom: 28px; }
+    .en-main { font-size: 38px; font-weight: 900; line-height: 1.22; letter-spacing: -0.03em; margin: 0 0 28px; }
+    .en-main em, .back-title em { color: var(--emerald); font-style: normal; }
+    .divider { width: 40px; height: 4px; border-radius: 999px; background: var(--emerald-3); margin-bottom: 28px; }
+    .ko-main { color: var(--emerald); font-size: 24px; font-weight: 800; line-height: 1.45; }
+    .tap-hint { margin-top: 56px; color: var(--slate-300); font-size: 11px; letter-spacing: .18em; font-weight: 900; text-transform: uppercase; }
 
-                const apiKey = "";
+    .card-back {
+      background: var(--card-dark); color: white; padding: 24px; transform: rotateY(180deg);
+      overflow-y: auto;
+    }
+    .card-back::-webkit-scrollbar { width: 6px; }
+    .card-back::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+    .back-title { margin: 0 0 6px; font-size: 26px; color: #34d399; line-height: 1.3; font-weight: 900; }
+    .back-ko { color: #64748b; font-size: 12px; font-weight: 800; text-transform: uppercase; }
+    .mark-btn {
+      width: 52px; height: 52px; border-radius: 18px; border: none; cursor: pointer;
+      background: #1f2937; color: #64748b; display: grid; place-items: center;
+      box-shadow: var(--shadow);
+    }
+    .mark-btn.active { background: var(--yellow); color: white; }
+    .examples-title { color: #64748b; font-size: 10px; font-weight: 900; letter-spacing: .22em; text-transform: uppercase; margin: 4px 0 12px; }
+    .example { background: rgba(51,65,85,.6); border: 1px solid rgba(71,85,105,.35); border-radius: 28px; padding: 20px; margin-bottom: 14px; }
+    .example-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 10px; }
+    .example-label { font-size: 10px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; color: #10b981; }
+    .mini-btn {
+      padding: 8px 12px; border-radius: 10px; font-size: 11px; font-weight: 900;
+      background: var(--emerald); color: white; border: none;
+    }
+    .mini-btn.muted { background: #334155; color: #cbd5e1; }
+    .ko-example { margin: 0; color: #f8fafc; font-weight: 800; line-height: 1.5; }
+    .en-answer {
+      margin-top: 12px; padding: 14px; background: rgba(16,185,129,.12); border: 1px solid rgba(16,185,129,.22);
+      border-radius: 18px; color: #34d399; font-weight: 900; line-height: 1.6;
+    }
+    .empty {
+      width: 100%; height: 580px; background: white; border-radius: 40px; border: 2px dashed var(--slate-200);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 28px;
+    }
+    .empty-star { font-size: 64px; color: var(--slate-200); margin-bottom: 18px; }
+    .empty h3 { margin: 0 0 8px; font-size: 28px; }
+    .empty p { margin: 0 0 24px; color: var(--muted2); line-height: 1.7; }
+    .ghost-btn { padding: 18px 26px; border-radius: 24px; background: var(--slate-800); color: white; font-weight: 900; box-shadow: var(--shadow-lg); border: none; }
 
-                // --- SVG Icons Components ---
-                function ChevronLeftIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="m15 18-6-6 6-6" />
-                        </svg>
-                    );
-                }
-                function ChevronRightIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="m9 18 6-6-6-6" />
-                        </svg>
-                    );
-                }
-                function RotateCwIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
-                            <path d="M21 3v5h-5" />
-                        </svg>
-                    );
-                }
-                function StarIcon({ fill = "none" }) {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill={fill}
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                        </svg>
-                    );
-                }
-                function GraduationIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
-                            <path d="M6 12v5c3 3 9 3 12 0v-5" />
-                        </svg>
-                    );
-                }
-                function VolumeIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
-                            <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
-                            <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
-                        </svg>
-                    );
-                }
-                function SparklesIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
-                            <path d="M5 3v4" />
-                            <path d="M19 17v4" />
-                            <path d="M3 5h4" />
-                            <path d="M17 19h4" />
-                        </svg>
-                    );
-                }
-                function MessageIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                        </svg>
-                    );
-                }
-                function XIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M18 6 6 18M6 6l12 12" />
-                        </svg>
-                    );
-                }
-                function CheckIcon() {
-                    return (
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="24"
-                            height="24"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                        >
-                            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                            <polyline points="22 4 12 14.01 9 11.01" />
-                        </svg>
-                    );
-                }
+    .bottom-nav {
+      position: fixed; left: 0; right: 0; bottom: 20px; padding: 0 16px; z-index: 40;
+    }
+    .bottom-inner { max-width: 520px; margin: 0 auto; display: flex; gap: 14px; }
+    .action-btn {
+      border: none; border-radius: 28px; padding: 18px 20px; font-weight: 900; box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; justify-content: center; gap: 10px; font-size: 18px;
+    }
+    .action-btn.prev { flex: 1; background: white; color: var(--slate-800); }
+    .action-btn.next { flex: 2; background: var(--emerald); color: white; }
+    .action-btn:disabled { background: var(--slate-200); color: var(--muted2); cursor: not-allowed; box-shadow: none; }
 
-                // --- PCM to WAV Utility ---
-                function pcmToWav(pcmData, sampleRate) {
-                    const buffer = new ArrayBuffer(44 + pcmData.length * 2);
-                    const view = new DataView(buffer);
-                    const writeStr = (off, s) => {
-                        for (let i = 0; i < s.length; i++)
-                            view.setUint8(off + i, s.charCodeAt(i));
-                    };
-                    writeStr(0, "RIFF");
-                    view.setUint32(4, 32 + pcmData.length * 2, true);
-                    writeStr(8, "WAVE");
-                    writeStr(12, "fmt ");
-                    view.setUint32(16, 16, true);
-                    view.setUint16(20, 1, true);
-                    view.setUint16(22, 1, true);
-                    view.setUint32(24, sampleRate, true);
-                    view.setUint32(28, sampleRate * 2, true);
-                    view.setUint16(32, 2, true);
-                    view.setUint16(34, 16, true);
-                    writeStr(36, "data");
-                    view.setUint32(40, pcmData.length * 2, true);
-                    for (let i = 0; i < pcmData.length; i++)
-                        view.setInt16(44 + i * 2, pcmData[i], true);
-                    return buffer;
-                }
+    .icon { font-style: normal; }
 
-                const DAY_TITLES = [
-                    "자유시간 & 취미",
-                    "장점 & 감정",
-                    "돌발 & 트렌드",
-                    "선호 & 사회 이슈",
-                    "단점 & 변화",
-                    "문제해결 & 미래",
-                    "롤플레이 시작",
-                    "예약 확인",
-                    "추천 & 문제",
-                    "마무리 & 감사",
-                ];
+    @media (max-width: 640px) {
+      body { padding: 14px 14px 120px; }
+      .title { font-size: 26px; }
+      .card-wrap, .empty { height: 540px; }
+      .en-main { font-size: 31px; }
+      .ko-main { font-size: 20px; }
+      .subtitle { font-size: 18px; }
+      .fav-btn { padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="between header">
+      <div class="logo">
+        <div class="logo-badge">🎓</div>
+        <h1 class="title">OPIc 72 <span>JOON</span></h1>
+      </div>
+      <button id="favBtn" class="fav-btn" type="button">⭐ <span id="favCount">0</span></button>
+    </header>
 
-                const DATA = [
-                    // Day 1
-                    {
-                        id: 1,
-                        day: 1,
-                        en: "I really enjoy <em>___</em> in my free time.",
-                        ko: "자유 시간에 ___ 하는 걸 정말 좋아해요.",
-                        ex: [
-                            {
-                                ko: "음악 듣기",
-                                en: "I really enjoy listening to music in my free time.",
-                            },
-                            {
-                                ko: "집에서 요리",
-                                en: "I really enjoy cooking at home in my free time.",
-                            },
-                            {
-                                ko: "독서",
-                                en: "I really enjoy reading books in my free time.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 2,
-                        day: 1,
-                        en: "One of my favorite activities is <em>___</em>.",
-                        ko: "가장 좋아하는 활동 중 하나는 ___ 하는 거예요.",
-                        ex: [
-                            {
-                                ko: "헬스장 가기",
-                                en: "One of my favorite activities is going to the gym.",
-                            },
-                            {
-                                ko: "영화 감상",
-                                en: "One of my favorite activities is watching movies.",
-                            },
-                            {
-                                ko: "주말 등산",
-                                en: "One of my favorite activities is hiking on weekends.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 3,
-                        day: 1,
-                        en: "I usually <em>___</em> when I have free time.",
-                        ko: "저는 시간이 있을 때 보통 ___ 해요.",
-                        ex: [
-                            {
-                                ko: "산책",
-                                en: "I usually go for a walk when I have free time.",
-                            },
-                            {
-                                ko: "팟캐스트 듣기",
-                                en: "I usually listen to podcasts when I have free time.",
-                            },
-                            {
-                                ko: "카페 방문",
-                                en: "I usually visit cafes when I have free time.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 4,
-                        day: 1,
-                        en: "I often <em>___</em> on weekends.",
-                        ko: "저는 주말에 ___ 하는 편이에요.",
-                        ex: [
-                            {
-                                ko: "등산",
-                                en: "I often go hiking on weekends.",
-                            },
-                            {
-                                ko: "친구와 저녁",
-                                en: "I often meet friends for dinner on weekends.",
-                            },
-                            {
-                                ko: "집에서 영화",
-                                en: "I often watch movies at home on weekends.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 5,
-                        day: 1,
-                        en: "Sometimes I <em>___</em> with my friends.",
-                        ko: "가끔 친구들이랑 같이 ___ 하기도 해요.",
-                        ex: [
-                            {
-                                ko: "헬스장",
-                                en: "Sometimes I go to the gym with my friends.",
-                            },
-                            {
-                                ko: "캠핑",
-                                en: "Sometimes I go camping with my friends.",
-                            },
-                            {
-                                ko: "스포츠",
-                                en: "Sometimes I play sports with my friends.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 6,
-                        day: 1,
-                        en: "Most of the time I <em>___</em> alone.",
-                        ko: "대부분은 혼자 ___ 하는 편이에요.",
-                        ex: [
-                            {
-                                ko: "운동",
-                                en: "Most of the time I work out alone.",
-                            },
-                            {
-                                ko: "콘서트",
-                                en: "Most of the time I go to concerts alone.",
-                            },
-                            {
-                                ko: "요리",
-                                en: "Most of the time I enjoy cooking alone.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 7,
-                        day: 1,
-                        en: "I especially like <em>___</em> because it helps me relax.",
-                        ko: "저는 특히 ___ 하는 걸 좋아하는데 스트레스가 풀리거든요.",
-                        ex: [
-                            {
-                                ko: "재즈 음악",
-                                en: "I especially like listening to jazz because it helps me relax.",
-                            },
-                            {
-                                ko: "수영",
-                                en: "I especially like swimming because it helps me relax.",
-                            },
-                            {
-                                ko: "소설",
-                                en: "I especially like reading novels because it helps me relax.",
-                            },
-                        ],
-                    },
-                    // Day 2
-                    {
-                        id: 8,
-                        day: 2,
-                        en: "It's a great way to <em>___</em>.",
-                        ko: "___ 하기 정말 좋은 방법이에요.",
-                        ex: [
-                            {
-                                ko: "스트레스 해소",
-                                en: "It's a great way to relieve stress.",
-                            },
-                            {
-                                ko: "새로운 사람",
-                                en: "It's a great way to meet new people.",
-                            },
-                            {
-                                ko: "건강 유지",
-                                en: "It's a great way to stay healthy.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 9,
-                        day: 2,
-                        en: "I feel <em>___</em> when I do this.",
-                        ko: "이것을 할 때 ___ 기분이 들어요.",
-                        ex: [
-                            {
-                                ko: "기운이 나는",
-                                en: "I feel energized when I do this.",
-                            },
-                            {
-                                ko: "평온한",
-                                en: "I feel peaceful when I do this.",
-                            },
-                            {
-                                ko: "성취감을 느끼는",
-                                en: "I feel a sense of accomplishment when I do this.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 10,
-                        day: 2,
-                        en: "The best thing about it is <em>___</em>.",
-                        ko: "그것의 가장 좋은 점은 ___ 입니다.",
-                        ex: [
-                            {
-                                ko: "접근성",
-                                en: "The best thing about it is that it's very accessible.",
-                            },
-                            {
-                                ko: "비용 무",
-                                en: "The best thing about it is that it costs nothing.",
-                            },
-                            {
-                                ko: "분위기",
-                                en: "The best thing about it is the cozy atmosphere.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 11,
-                        day: 2,
-                        en: "I am very interested in <em>___</em>.",
-                        ko: "저는 ___ 에 관심이 많습니다.",
-                        ex: [
-                            {
-                                ko: "최신 기술",
-                                en: "I am very interested in the latest technology.",
-                            },
-                            {
-                                ko: "문화",
-                                en: "I am very interested in foreign cultures.",
-                            },
-                            {
-                                ko: "환경 보호",
-                                en: "I am very interested in environmental protection.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 12,
-                        day: 2,
-                        en: "It makes me feel <em>___</em>.",
-                        ko: "그것은 저를 ___ 하게 만들어요.",
-                        ex: [
-                            {
-                                ko: "행복",
-                                en: "It makes me feel happy and content.",
-                            },
-                            {
-                                ko: "자신감",
-                                en: "It makes me feel more confident.",
-                            },
-                            {
-                                ko: "동기부여",
-                                en: "It makes me feel motivated.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 13,
-                        day: 2,
-                        en: "I find it very <em>___</em>.",
-                        ko: "저는 그것이 매우 ___ 하다고 생각해요.",
-                        ex: [
-                            {
-                                ko: "흥미로운",
-                                en: "I find it very fascinating.",
-                            },
-                            { ko: "보람찬", en: "I find it very rewarding." },
-                            {
-                                ko: "도전적인",
-                                en: "I find it very challenging.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 14,
-                        day: 2,
-                        en: "I can't help but <em>___</em>.",
-                        ko: "___ 하지 않을 수 없어요.",
-                        ex: [
-                            { ko: "웃음", en: "I can't help but smile." },
-                            { ko: "동의", en: "I can't help but agree." },
-                            { ko: "걱정", en: "I can't help but worry." },
-                        ],
-                    },
-                    // Day 3
-                    {
-                        id: 15,
-                        day: 3,
-                        en: "Recently, I had an experience where <em>___</em>.",
-                        ko: "최근에 ___ 했던 경험이 있어요.",
-                        ex: [
-                            {
-                                ko: "길을 잃다",
-                                en: "Recently, I had an experience where I got lost.",
-                            },
-                            {
-                                ko: "유명인",
-                                en: "Recently, I had an experience where I saw a celebrity.",
-                            },
-                            {
-                                ko: "실수",
-                                en: "Recently, I had an experience where I made a mistake.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 16,
-                        day: 3,
-                        en: "I remember a time when <em>___</em>.",
-                        ko: "___ 했던 때가 기억납니다.",
-                        ex: [
-                            {
-                                ko: "해외 여행",
-                                en: "I remember a time when I traveled abroad.",
-                            },
-                            {
-                                ko: "폭우",
-                                en: "I remember a time when it rained heavily.",
-                            },
-                            {
-                                ko: "다툼",
-                                en: "I remember a time when I had a fight.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 17,
-                        day: 3,
-                        en: "Out of nowhere, <em>___</em> happened.",
-                        ko: "갑자기 ___ 일이 일어났어요.",
-                        ex: [
-                            {
-                                ko: "전화",
-                                en: "Out of nowhere, my phone started ringing.",
-                            },
-                            {
-                                ko: "타이어 펑크",
-                                en: "Out of nowhere, my car got a flat tire.",
-                            },
-                            {
-                                ko: "아이디어",
-                                en: "Out of nowhere, a great idea came to mind.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 18,
-                        day: 3,
-                        en: "What's trending these days is <em>___</em>.",
-                        ko: "요즘 유행하는 것은 ___ 입니다.",
-                        ex: [
-                            {
-                                ko: "숏폼",
-                                en: "What's trending these days is watching short-form videos.",
-                            },
-                            {
-                                ko: "친환경",
-                                en: "What's trending these days is using eco-friendly products.",
-                            },
-                            {
-                                ko: "재택",
-                                en: "What's trending these days is working from home.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 19,
-                        day: 3,
-                        en: "People are more concerned about <em>___</em> now.",
-                        ko: "사람들은 이제 ___ 에 더 신경을 씁니다.",
-                        ex: [
-                            {
-                                ko: "정신 건강",
-                                en: "People are more concerned about mental health now.",
-                            },
-                            {
-                                ko: "개인 정보",
-                                en: "People are more concerned about personal privacy now.",
-                            },
-                            {
-                                ko: "물가",
-                                en: "People are more concerned about rising prices now.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 20,
-                        day: 3,
-                        en: "I've noticed that many people <em>___</em>.",
-                        ko: "많은 사람들이 ___ 하는 것을 알아챘어요.",
-                        ex: [
-                            {
-                                ko: "캠핑",
-                                en: "I've noticed that many people enjoy camping.",
-                            },
-                            {
-                                ko: "건강식",
-                                en: "I've noticed that many people eat healthy food.",
-                            },
-                            {
-                                ko: "투자",
-                                en: "I've noticed that many people invest in stocks.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 21,
-                        day: 3,
-                        en: "It was quite a <em>___</em> experience.",
-                        ko: "꽤나 ___ 한 경험이었어요.",
-                        ex: [
-                            {
-                                ko: "당황",
-                                en: "It was quite an embarrassing experience.",
-                            },
-                            {
-                                ko: "신선",
-                                en: "It was quite a refreshing experience.",
-                            },
-                            {
-                                ko: "공포",
-                                en: "It was quite a scary experience.",
-                            },
-                        ],
-                    },
-                    // Day 4
-                    {
-                        id: 22,
-                        day: 4,
-                        en: "I prefer <em>___</em> over <em>___</em>.",
-                        ko: "저는 ___ 보다 ___ 를 선호해요.",
-                        ex: [
-                            {
-                                ko: "차/커피",
-                                en: "I prefer tea over coffee in the morning.",
-                            },
-                            {
-                                ko: "겨울/여름",
-                                en: "I prefer winter over summer.",
-                            },
-                            {
-                                ko: "집/극장",
-                                en: "I prefer watching movies at home over going to the theater.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 23,
-                        day: 4,
-                        en: "If I had to choose, I would pick <em>___</em>.",
-                        ko: "선택해야 한다면, 저는 ___ 를 고르겠어요.",
-                        ex: [
-                            {
-                                ko: "바다/산",
-                                en: "If I had to choose, I would pick the ocean.",
-                            },
-                            {
-                                ko: "의사",
-                                en: "If I had to choose, I would pick being a doctor.",
-                            },
-                            {
-                                ko: "아침형",
-                                en: "If I had to choose, I would pick being an early bird.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 24,
-                        day: 4,
-                        en: "There's a lot of debate about <em>___</em>.",
-                        ko: "___ 에 대해 많은 논란이 있습니다.",
-                        ex: [
-                            {
-                                ko: "AI 윤리",
-                                en: "There's a lot of debate about the ethics of AI.",
-                            },
-                            {
-                                ko: "원격 수업",
-                                en: "There's a lot of debate about online classes.",
-                            },
-                            {
-                                ko: "마스크",
-                                en: "There's a lot of debate about wearing masks.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 25,
-                        day: 4,
-                        en: "One major problem we face is <em>___</em>.",
-                        ko: "우리가 직면한 주요 문제 중 하나는 ___ 입니다.",
-                        ex: [
-                            {
-                                ko: "온난화",
-                                en: "One major problem we face is global warming.",
-                            },
-                            {
-                                ko: "실업",
-                                en: "One major problem we face is youth unemployment.",
-                            },
-                            {
-                                ko: "오염",
-                                en: "One major problem we face is plastic pollution.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 26,
-                        day: 4,
-                        en: "It's important to <em>___</em> for our future.",
-                        ko: "미래를 위해 ___ 하는 것이 중요합니다.",
-                        ex: [
-                            {
-                                ko: "저축",
-                                en: "It's important to save money for our future.",
-                            },
-                            {
-                                ko: "기술",
-                                en: "It's important to learn new skills for our future.",
-                            },
-                            {
-                                ko: "지구",
-                                en: "It's important to protect the earth for our future.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 27,
-                        day: 4,
-                        en: "I strongly believe that <em>___</em>.",
-                        ko: "저는 ___ 라고 강력히 믿습니다.",
-                        ex: [
-                            {
-                                ko: "교육",
-                                en: "I strongly believe that education is the key.",
-                            },
-                            {
-                                ko: "정직",
-                                en: "I strongly believe that honesty is the best policy.",
-                            },
-                            {
-                                ko: "평등",
-                                en: "I strongly believe that everyone should be equal.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 28,
-                        day: 4,
-                        en: "One advantage of <em>___</em> is convenience.",
-                        ko: "___ 의 장점 중 하나는 편리함이에요.",
-                        ex: [
-                            {
-                                ko: "쇼핑",
-                                en: "One advantage of online shopping is convenience.",
-                            },
-                            {
-                                ko: "재택",
-                                en: "One advantage of working from home is convenience.",
-                            },
-                            {
-                                ko: "배달",
-                                en: "One advantage of using delivery apps is convenience.",
-                            },
-                        ],
-                    },
-                    // Day 5
-                    {
-                        id: 29,
-                        day: 5,
-                        en: "The main disadvantage of <em>___</em> is <em>___</em>.",
-                        ko: "___ 의 주된 단점은 ___ 입니다.",
-                        ex: [
-                            {
-                                ko: "도시 소음",
-                                en: "The main disadvantage of the city is the noise.",
-                            },
-                            {
-                                ko: "폰 중독",
-                                en: "The main disadvantage of smartphones is addictiveness.",
-                            },
-                            {
-                                ko: "SNS 낭비",
-                                en: "The main disadvantage of SNS is time wasting.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 30,
-                        day: 5,
-                        en: "It has changed a lot compared to <em>___</em>.",
-                        ko: "___ 와 비교했을 때 정말 많이 변했어요.",
-                        ex: [
-                            {
-                                ko: "10년 전",
-                                en: "It has changed a lot compared to ten years ago.",
-                            },
-                            {
-                                ko: "어린 시절",
-                                en: "It has changed a lot compared to my childhood.",
-                            },
-                            {
-                                ko: "작년",
-                                en: "It has changed a lot compared to last year.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 31,
-                        day: 5,
-                        en: "I used to <em>___</em>, but now I <em>___</em>.",
-                        ko: "전에는 ___ 하곤 했지만, 이제는 ___ 해요.",
-                        ex: [
-                            {
-                                ko: "육식/채식",
-                                en: "I used to eat meat, but now I am a vegetarian.",
-                            },
-                            {
-                                ko: "늦잠/일찍",
-                                en: "I used to sleep in, but now I wake up early.",
-                            },
-                            {
-                                ko: "게임/운동",
-                                en: "I used to play games, but now I work out.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 32,
-                        day: 5,
-                        en: "The biggest change I've seen is <em>___</em>.",
-                        ko: "제가 본 가장 큰 변화는 ___ 입니다.",
-                        ex: [
-                            {
-                                ko: "기술 발전",
-                                en: "The biggest change I've seen is the tech advancement.",
-                            },
-                            {
-                                ko: "가치관",
-                                en: "The biggest change I've seen is my perspective.",
-                            },
-                            {
-                                ko: "동네",
-                                en: "The biggest change I've seen is my neighborhood.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 33,
-                        day: 5,
-                        en: "It's not as <em>___</em> as it used to be.",
-                        ko: "예전만큼 ___ 하지 않아요.",
-                        ex: [
-                            {
-                                ko: "유명",
-                                en: "It's not as popular as it used to be.",
-                            },
-                            {
-                                ko: "깨끗",
-                                en: "It's not as clean as it used to be.",
-                            },
-                            {
-                                ko: "조용",
-                                en: "It's not as quiet as it used to be.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 34,
-                        day: 5,
-                        en: "I've become more <em>___</em> lately.",
-                        ko: "최근에 더 ___ 해졌어요.",
-                        ex: [
-                            {
-                                ko: "인내심",
-                                en: "I've become more patient lately.",
-                            },
-                            {
-                                ko: "건강 중시",
-                                en: "I've become more health-conscious lately.",
-                            },
-                            {
-                                ko: "긍정적",
-                                en: "I've become more positive lately.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 35,
-                        day: 5,
-                        en: "I regret <em>___</em>.",
-                        ko: "저는 ___ 을 후회합니다.",
-                        ex: [
-                            {
-                                ko: "공부 안 한 것",
-                                en: "I regret not studying harder.",
-                            },
-                            {
-                                ko: "돈 쓴 것",
-                                en: "I regret spending too much money.",
-                            },
-                            {
-                                ko: "기회 놓친 것",
-                                en: "I regret missing that opportunity.",
-                            },
-                        ],
-                    },
-                    // Day 6
-                    {
-                        id: 36,
-                        day: 6,
-                        en: "To solve this problem, we need to <em>___</em>.",
-                        ko: "이 문제를 해결하기 위해 우리는 ___ 해야 합니다.",
-                        ex: [
-                            {
-                                ko: "협력",
-                                en: "To solve this problem, we need to work together.",
-                            },
-                            {
-                                ko: "정책 변경",
-                                en: "To solve this problem, we need to change the policy.",
-                            },
-                            {
-                                ko: "의식 고취",
-                                en: "To solve this problem, we need to raise awareness.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 37,
-                        day: 6,
-                        en: "In the future, I hope to <em>___</em>.",
-                        ko: "미래에 저는 ___ 하기를 희망합니다.",
-                        ex: [
-                            {
-                                ko: "여행",
-                                en: "In the future, I hope to travel the world.",
-                            },
-                            {
-                                ko: "사업",
-                                en: "In the future, I hope to start a business.",
-                            },
-                            {
-                                ko: "행복한 가정",
-                                en: "In the future, I hope to have a happy family.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 38,
-                        day: 6,
-                        en: "By 2030, technology will <em>___</em>.",
-                        ko: "2030년까지 기술은 ___ 할 것입니다.",
-                        ex: [
-                            {
-                                ko: "자동화",
-                                en: "By 2030, technology will automate everything.",
-                            },
-                            {
-                                ko: "질병 정복",
-                                en: "By 2030, technology will cure most diseases.",
-                            },
-                            {
-                                ko: "우주 여행",
-                                en: "By 2030, technology will make space travel common.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 39,
-                        day: 6,
-                        en: "I am planning to <em>___</em> next year.",
-                        ko: "내년에 ___ 할 계획입니다.",
-                        ex: [
-                            {
-                                ko: "이직",
-                                en: "I am planning to change my job next year.",
-                            },
-                            {
-                                ko: "언어 공부",
-                                en: "I am planning to learn a new language.",
-                            },
-                            {
-                                ko: "이사",
-                                en: "I am planning to move to a bigger house.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 40,
-                        day: 6,
-                        en: "The first thing I would do is <em>___</em>.",
-                        ko: "제가 가장 먼저 할 일은 ___ 입니다.",
-                        ex: [
-                            {
-                                ko: "전화",
-                                en: "The first thing I would do is call my parents.",
-                            },
-                            {
-                                ko: "짐 싸기",
-                                en: "The first thing I would do is pack my bags.",
-                            },
-                            {
-                                ko: "계획",
-                                en: "The first thing I would do is make a plan.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 41,
-                        day: 6,
-                        en: "It's hard to predict <em>___</em>.",
-                        ko: "___ 을 예측하기는 어렵습니다.",
-                        ex: [
-                            {
-                                ko: "날씨",
-                                en: "It's hard to predict the weather for tomorrow.",
-                            },
-                            {
-                                ko: "경제",
-                                en: "It's hard to predict the economic future.",
-                            },
-                            {
-                                ko: "승패",
-                                en: "It's hard to predict who will win.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 42,
-                        day: 6,
-                        en: "We must take action to <em>___</em>.",
-                        ko: "우리는 ___ 하기 위해 행동해야 합니다.",
-                        ex: [
-                            {
-                                ko: "지구 보호",
-                                en: "We must take action to save the planet.",
-                            },
-                            {
-                                ko: "빈곤 퇴치",
-                                en: "We must take action to end poverty.",
-                            },
-                            {
-                                ko: "법 준수",
-                                en: "We must take action to follow the law.",
-                            },
-                        ],
-                    },
-                    // Day 7
-                    {
-                        id: 43,
-                        day: 7,
-                        en: "Hello, I'm calling to <em>___</em>.",
-                        ko: "안녕하세요, ___ 하려고 전화드렸어요.",
-                        ex: [
-                            {
-                                ko: "예약",
-                                en: "Hello, I'm calling to make a reservation.",
-                            },
-                            {
-                                ko: "문의",
-                                en: "Hello, I'm calling to inquire about the item.",
-                            },
-                            {
-                                ko: "취소",
-                                en: "Hello, I'm calling to cancel my appointment.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 44,
-                        day: 7,
-                        en: "I'd like to ask a few questions about <em>___</em>.",
-                        ko: "___ 에 대해 몇 가지 여쭤보고 싶습니다.",
-                        ex: [
-                            {
-                                ko: "입장료",
-                                en: "I'd like to ask a few questions about the fee.",
-                            },
-                            {
-                                ko: "규정",
-                                en: "I'd like to ask a few questions about the rules.",
-                            },
-                            {
-                                ko: "영업 시간",
-                                en: "I'd like to ask a few questions about your hours.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 45,
-                        day: 7,
-                        en: "Could you tell me more about <em>___</em>?",
-                        ko: "___ 에 대해 더 자세히 말씀해 주시겠어요?",
-                        ex: [
-                            {
-                                ko: "상세 내용",
-                                en: "Could you tell me more about the details?",
-                            },
-                            {
-                                ko: "혜택",
-                                en: "Could you tell me more about the benefits?",
-                            },
-                            {
-                                ko: "위치",
-                                en: "Could you tell me more about the location.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 46,
-                        day: 7,
-                        en: "I was wondering if <em>___</em>.",
-                        ko: "혹시 ___ 인지 궁금합니다.",
-                        ex: [
-                            {
-                                ko: "좌석 유무",
-                                en: "I was wondering if there any seats left.",
-                            },
-                            {
-                                ko: "주차 가능",
-                                en: "I was wondering if parking is available.",
-                            },
-                            {
-                                ko: "카드 결제",
-                                en: "I was wondering if you accept credit cards.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 47,
-                        day: 7,
-                        en: "What are the options for <em>___</em>?",
-                        ko: "___ 에 대해 어떤 선택지들이 있나요?",
-                        ex: [
-                            {
-                                ko: "배송 방법",
-                                en: "What are the options for the shipping method?",
-                            },
-                            {
-                                ko: "메뉴 종류",
-                                en: "What are the options for the lunch menu?",
-                            },
-                            {
-                                ko: "요금제",
-                                en: "What are the options for the monthly plan?",
-                            },
-                        ],
-                    },
-                    {
-                        id: 48,
-                        day: 7,
-                        en: "Is it possible to <em>___</em>?",
-                        ko: "___ 이 가능한가요?",
-                        ex: [
-                            {
-                                ko: "당일 예약",
-                                en: "Is it possible to make a same-day reservation?",
-                            },
-                            {
-                                ko: "포장 주문",
-                                en: "Is it possible to order for takeout?",
-                            },
-                            {
-                                ko: "할인 혜택",
-                                en: "Is it possible to get a student discount?",
-                            },
-                        ],
-                    },
-                    {
-                        id: 49,
-                        day: 7,
-                        en: "How long does it take to <em>___</em>?",
-                        ko: "___ 하는 데 얼마나 걸리나요?",
-                        ex: [
-                            {
-                                ko: "거기 도착",
-                                en: "How long does it take to get there?",
-                            },
-                            {
-                                ko: "수리 완료",
-                                en: "How long does it take to finish the repair?",
-                            },
-                            {
-                                ko: "결과 통보",
-                                en: "How long does it take to get the results?",
-                            },
-                        ],
-                    },
-                    // Day 8
-                    {
-                        id: 50,
-                        day: 8,
-                        en: "I'm sorry, but I have a problem with <em>___</em>.",
-                        ko: "죄송하지만, ___ 에 문제가 생겼어요.",
-                        ex: [
-                            {
-                                ko: "예약 오류",
-                                en: "I'm sorry, but I have a problem with my reservation.",
-                            },
-                            {
-                                ko: "주문 누락",
-                                en: "I'm sorry, but I have a problem with the item.",
-                            },
-                            {
-                                ko: "인터넷",
-                                en: "I'm sorry, but I have a problem with my internet.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 51,
-                        day: 8,
-                        en: "I'd like to change my <em>___</em> to <em>___</em>.",
-                        ko: "제 ___ 을 ___ 로 바꾸고 싶어요.",
-                        ex: [
-                            {
-                                ko: "날짜 변경",
-                                en: "I'd like to change my flight date to Friday.",
-                            },
-                            {
-                                ko: "메뉴 변경",
-                                en: "I'd like to change my order to a salad.",
-                            },
-                            {
-                                ko: "주소 변경",
-                                en: "I'd like to change my shipping address.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 52,
-                        day: 8,
-                        en: "Something is wrong with <em>___</em>.",
-                        ko: "___ 에 뭔가 문제가 있어요.",
-                        ex: [
-                            {
-                                ko: "컴퓨터",
-                                en: "Something is wrong with my computer.",
-                            },
-                            {
-                                ko: "도어락",
-                                en: "Something is wrong with the door lock.",
-                            },
-                            {
-                                ko: "청구서",
-                                en: "Something is wrong with my bill.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 53,
-                        day: 8,
-                        en: "I cannot find <em>___</em> anywhere.",
-                        ko: "어디에서도 ___ 을 찾을 수 없어요.",
-                        ex: [
-                            {
-                                ko: "지갑 유실",
-                                en: "I cannot find my wallet anywhere.",
-                            },
-                            {
-                                ko: "이름 누락",
-                                en: "I cannot find my name on the list.",
-                            },
-                            {
-                                ko: "리모컨",
-                                en: "I cannot find the TV remote anywhere.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 54,
-                        day: 8,
-                        en: "It seems like <em>___</em> is missing.",
-                        ko: "___ 이 누락된 것 같아요.",
-                        ex: [
-                            {
-                                ko: "가방",
-                                en: "It seems like my bag is missing.",
-                            },
-                            {
-                                ko: "소스",
-                                en: "It seems like the sauce is missing.",
-                            },
-                            {
-                                ko: "서류",
-                                en: "It seems like a page is missing.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 55,
-                        day: 8,
-                        en: "Can you double-check <em>___</em> for me?",
-                        ko: "저를 위해 ___ 을 다시 한 번 확인해 주시겠어요?",
-                        ex: [
-                            {
-                                ko: "명단 확인",
-                                en: "Can you double-check the reservation list?",
-                            },
-                            {
-                                ko: "재고 유무",
-                                en: "Can you double-check the stock?",
-                            },
-                            {
-                                ko: "메일 수신",
-                                en: "Can you double-check if you got my email?",
-                            },
-                        ],
-                    },
-                    {
-                        id: 56,
-                        day: 8,
-                        en: "I'm afraid I won't be able to <em>___</em>.",
-                        ko: "유감스럽게도 ___ 을 할 수 없을 것 같아요.",
-                        ex: [
-                            {
-                                ko: "정시 도착",
-                                en: "I'm afraid I won't be able to arrive on time.",
-                            },
-                            {
-                                ko: "참석",
-                                en: "I'm afraid I won't be able to attend.",
-                            },
-                            {
-                                ko: "변제",
-                                en: "I'm afraid I won't be able to pay you back yet.",
-                            },
-                        ],
-                    },
-                    // Day 9
-                    {
-                        id: 57,
-                        day: 9,
-                        en: "Could you recommend <em>___</em>?",
-                        ko: "___ 을 추천해 주시겠어요?",
-                        ex: [
-                            {
-                                ko: "근처 식당",
-                                en: "Could you recommend a good restaurant nearby?",
-                            },
-                            {
-                                ko: "재미있는 영화",
-                                en: "Could you recommend an interesting movie?",
-                            },
-                            {
-                                ko: "좋은 선물",
-                                en: "Could you recommend a good gift?",
-                            },
-                        ],
-                    },
-                    {
-                        id: 58,
-                        day: 9,
-                        en: "I'm looking for <em>___</em>.",
-                        ko: "저는 ___ 을 찾고 있습니다.",
-                        ex: [
-                            {
-                                ko: "아르바이트",
-                                en: "I'm looking for a part-time job.",
-                            },
-                            {
-                                ko: "생일 선물",
-                                en: "I'm looking for a birthday present.",
-                            },
-                            {
-                                ko: "가장 가까운 역",
-                                en: "I'm looking for the nearest station.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 59,
-                        day: 9,
-                        en: "I'm having trouble with <em>___</em>.",
-                        ko: "___ 때문에 곤란을 겪고 있어요.",
-                        ex: [
-                            {
-                                ko: "차 엔진",
-                                en: "I'm having trouble with my car lately.",
-                            },
-                            {
-                                ko: "숙제",
-                                en: "I'm having trouble with my homework.",
-                            },
-                            {
-                                ko: "이웃 소음",
-                                en: "I'm having trouble with the neighbor's noise.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 60,
-                        day: 9,
-                        en: "Is there any other way to <em>___</em>?",
-                        ko: "___ 할 수 있는 다른 방법이 있을까요?",
-                        ex: [
-                            {
-                                ko: "할인",
-                                en: "Is there any other way to get a discount?",
-                            },
-                            {
-                                ko: "이동 수단",
-                                en: "Is there any other way to get there?",
-                            },
-                            {
-                                ko: "문제 해결",
-                                en: "Is there any other way to solve this?",
-                            },
-                        ],
-                    },
-                    {
-                        id: 61,
-                        day: 9,
-                        en: "I'll give you a call back once <em>___</em>.",
-                        ko: "___ 하면 다시 전화드릴게요.",
-                        ex: [
-                            {
-                                ko: "스케줄 확인",
-                                en: "I'll give you a call back once I check my schedule.",
-                            },
-                            {
-                                ko: "집 도착",
-                                en: "I'll give you a call back once I get home.",
-                            },
-                            {
-                                ko: "회의 종료",
-                                en: "I'll give you a call back once the meeting is over.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 62,
-                        day: 9,
-                        en: "Could you please <em>___</em> instead?",
-                        ko: "대신 ___ 해 주시겠어요?",
-                        ex: [
-                            {
-                                ko: "문자",
-                                en: "Could you please send me a text instead?",
-                            },
-                            {
-                                ko: "환불",
-                                en: "Could you please process a refund instead?",
-                            },
-                            {
-                                ko: "나중에 통화",
-                                en: "Could you please call me back later instead?",
-                            },
-                        ],
-                    },
-                    {
-                        id: 63,
-                        day: 9,
-                        en: "I'm really sorry for <em>___</em>.",
-                        ko: "___ 해서 정말 죄송합니다.",
-                        ex: [
-                            {
-                                ko: "지각",
-                                en: "I'm really sorry for being late.",
-                            },
-                            {
-                                ko: "불편",
-                                en: "I'm really sorry for causing any inconvenience.",
-                            },
-                            {
-                                ko: "대기",
-                                en: "I'm really sorry for making you wait.",
-                            },
-                        ],
-                    },
-                    // Day 10
-                    {
-                        id: 64,
-                        day: 10,
-                        en: "In conclusion, <em>___</em> is <em>___</em>.",
-                        ko: "결론적으로, ___ 은 ___ 입니다.",
-                        ex: [
-                            {
-                                ko: "운동/필수",
-                                en: "In conclusion, regular exercise is essential for health.",
-                            },
-                            {
-                                ko: "꿈/도전",
-                                en: "In conclusion, my dream is to keep challenging myself.",
-                            },
-                            {
-                                ko: "영화/최고",
-                                en: "In conclusion, this movie is the best one ever.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 65,
-                        day: 10,
-                        en: "That's all I have to say about <em>___</em>.",
-                        ko: "___ 에 대해 제가 드릴 말씀은 여기까지입니다.",
-                        ex: [
-                            {
-                                ko: "개인 취미",
-                                en: "That's all I have to say about my personal hobbies.",
-                            },
-                            {
-                                ko: "사건 전말",
-                                en: "That's all I have to say about this incident.",
-                            },
-                            {
-                                ko: "나의 계획",
-                                en: "That's all I have to say about my future plans.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 66,
-                        day: 10,
-                        en: "Thank you for listening to <em>___</em>.",
-                        ko: "___ 을 들어주셔서 감사합니다.",
-                        ex: [
-                            {
-                                ko: "나의 이야기",
-                                en: "Thank you for listening to my story.",
-                            },
-                            {
-                                ko: "오늘의 발표",
-                                en: "Thank you for listening to my presentation.",
-                            },
-                            {
-                                ko: "나의 변명",
-                                en: "Thank you for listening to my explanation.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 67,
-                        day: 10,
-                        en: "I hope this answers your <em>___</em>.",
-                        ko: "이것이 당신의 ___ 에 답이 되길 바랍니다.",
-                        ex: [
-                            {
-                                ko: "질문",
-                                en: "I hope this answers your questions.",
-                            },
-                            {
-                                ko: "우려",
-                                en: "I hope this answers your concerns.",
-                            },
-                            {
-                                ko: "호기심",
-                                en: "I hope this answers your curiosity.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 68,
-                        day: 10,
-                        en: "Looking forward to <em>___</em>.",
-                        ko: "___ 을 기대하고 있습니다.",
-                        ex: [
-                            {
-                                ko: "답장",
-                                en: "Looking forward to hearing from you soon.",
-                            },
-                            {
-                                ko: "미팅",
-                                en: "Looking forward to our meeting next week.",
-                            },
-                            {
-                                ko: "좋은 소식",
-                                en: "Looking forward to some good news.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 69,
-                        day: 10,
-                        en: "It was a pleasure <em>___</em>.",
-                        ko: "___ 해서 즐거웠습니다.",
-                        ex: [
-                            {
-                                ko: "만남",
-                                en: "It was a pleasure meeting you today.",
-                            },
-                            {
-                                ko: "협업",
-                                en: "It was a pleasure working with you.",
-                            },
-                            {
-                                ko: "대화",
-                                en: "It was a pleasure talking to you.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 70,
-                        day: 10,
-                        en: "Have a wonderful <em>___</em>!",
-                        ko: "멋진 ___ 보내세요!",
-                        ex: [
-                            {
-                                ko: "주말",
-                                en: "Have a wonderful weekend with your family!",
-                            },
-                            { ko: "하루", en: "Have a wonderful day ahead!" },
-                            {
-                                ko: "여행",
-                                en: "Have a wonderful trip to Paris!",
-                            },
-                        ],
-                    },
-                    {
-                        id: 71,
-                        day: 10,
-                        en: "Feel free to <em>___</em> anytime.",
-                        ko: "언제든지 편하게 ___ 하세요.",
-                        ex: [
-                            {
-                                ko: "연락",
-                                en: "Feel free to call me anytime you need help.",
-                            },
-                            {
-                                ko: "질문",
-                                en: "Feel free to ask questions anytime.",
-                            },
-                            {
-                                ko: "방문",
-                                en: "Feel free to visit our office anytime.",
-                            },
-                        ],
-                    },
-                    {
-                        id: 72,
-                        day: 10,
-                        en: "That's it for <em>___</em>. Thanks!",
-                        ko: "___ 은 이게 다입니다. 고마워요!",
-                        ex: [
-                            {
-                                ko: "오늘 수업",
-                                en: "That's it for today's lesson. Thanks!",
-                            },
-                            {
-                                ko: "내 답변",
-                                en: "That's it for my answer. Thanks!",
-                            },
-                            {
-                                ko: "지금까지",
-                                en: "That's it for now. Thanks!",
-                            },
-                        ],
-                    },
-                ];
+    <nav id="dayNav" class="days"></nav>
 
-                function App() {
-                    const [day, setDay] = useState(1);
-                    const [index, setIndex] = useState(0);
-                    const [flipped, setFlipped] = useState(false);
-                    const [marks, setMarks] = useState(new Set());
-                    const [revealed, setRevealed] = useState(new Set());
-                    const [isAiLoading, setIsAiLoading] = useState(false);
-                    const [aiResult, setAiResult] = useState(null);
-                    const [isSpeaking, setIsSpeaking] = useState(false);
+    <section class="info-box">
+      <div class="between" style="align-items:flex-end;">
+        <div>
+          <div class="label">Current Study</div>
+          <h2 id="infoTitle" class="subtitle"></h2>
+        </div>
+        <div id="countText" class="count"></div>
+      </div>
+      <div class="progress-wrap"><div id="progressBar" class="progress-bar"></div></div>
+    </section>
 
-                    const currentList = useMemo(() => {
-                        if (day === "fav")
-                            return DATA.filter((v) => marks.has(v.id));
-                        return DATA.filter((v) => v.day === day);
-                    }, [day, marks]);
+    <main id="mainArea"></main>
+  </div>
 
-                    const card = currentList[index] || DATA[0];
-                    const progress =
-                        currentList.length > 0
-                            ? ((index + 1) / currentList.length) * 100
-                            : 0;
+  <div class="bottom-nav">
+    <div class="bottom-inner">
+      <button id="prevBtn" class="action-btn prev" type="button">←</button>
+      <button id="nextBtn" class="action-btn next" type="button">다음 문장 →</button>
+    </div>
+  </div>
 
-                    // --- Handlers (Declared as functions to ensure scope safety) ---
-                    function move(dir) {
-                        if (
-                            index + dir >= 0 &&
-                            index + dir < currentList.length
-                        ) {
-                            setFlipped(false);
-                            setRevealed(new Set());
-                            setAiResult(null);
-                            setIndex(index + dir);
-                        }
-                    }
+  <script>
+    const DAY_TITLES = [
+      "자유시간 & 취미", "장점 & 감정", "돌발 & 트렌드", "선호 & 사회 이슈",
+      "단점 & 변화", "문제해결 & 미래", "롤플레이 시작", "예약 확인",
+      "추천 & 문제", "마무리 & 감사"
+    ];
 
-                    function toggleMark(e) {
-                        if (e) e.stopPropagation();
-                        const next = new Set(marks);
-                        if (next.has(card.id)) next.delete(card.id);
-                        else next.add(card.id);
-                        setMarks(next);
-                    }
+    const DATA = [
+      { id: 1, day: 1, en: "I really enjoy <em>___</em> in my free time.", ko: "자유 시간에 ___ 하는 걸 정말 좋아해요.", ex: [{ ko: "음악 듣기", en: "I really enjoy listening to music in my free time." }, { ko: "집에서 요리", en: "I really enjoy cooking at home in my free time." }, { ko: "독서", en: "I really enjoy reading books in my free time." }] },
+      { id: 2, day: 1, en: "One of my favorite activities is <em>___</em>.", ko: "가장 좋아하는 활동 중 하나는 ___ 하는 거예요.", ex: [{ ko: "헬스장 가기", en: "One of my favorite activities is going to the gym." }, { ko: "영화 감상", en: "One of my favorite activities is watching movies." }, { ko: "주말 등산", en: "One of my favorite activities is hiking on weekends." }] },
+      { id: 3, day: 1, en: "I usually <em>___</em> when I have free time.", ko: "저는 시간이 있을 때 보통 ___ 해요.", ex: [{ ko: "산책", en: "I usually go for a walk when I have free time." }, { ko: "팟캐스트 듣기", en: "I usually listen to podcasts when I have free time." }, { ko: "카페 방문", en: "I usually visit cafes when I have free time." }] },
+      { id: 4, day: 1, en: "I often <em>___</em> on weekends.", ko: "저는 주말에 ___ 하는 편이에요.", ex: [{ ko: "등산", en: "I often go hiking on weekends." }, { ko: "친구와 저녁", en: "I often meet friends for dinner on weekends." }, { ko: "집에서 영화", en: "I often watch movies at home on weekends." }] },
+      { id: 5, day: 1, en: "Sometimes I <em>___</em> with my friends.", ko: "가끔 친구들이랑 같이 ___ 하기도 해요.", ex: [{ ko: "헬스장", en: "Sometimes I go to the gym with my friends." }, { ko: "캠핑", en: "Sometimes I go camping with my friends." }, { ko: "스포츠", en: "Sometimes I play sports with my friends." }] },
+      { id: 6, day: 1, en: "Most of the time I <em>___</em> alone.", ko: "대부분은 혼자 ___ 하는 편이에요.", ex: [{ ko: "운동", en: "Most of the time I work out alone." }, { ko: "콘서트", en: "Most of the time I go to concerts alone." }, { ko: "요리", en: "Most of the time I enjoy cooking alone." }] },
+      { id: 7, day: 1, en: "I especially like <em>___</em> because it helps me relax.", ko: "저는 특히 ___ 하는 걸 좋아하는데 스트레스가 풀리거든요.", ex: [{ ko: "재즈 음악", en: "I especially like listening to jazz because it helps me relax." }, { ko: "수영", en: "I especially like swimming because it helps me relax." }, { ko: "소설", en: "I especially like reading novels because it helps me relax." }] },
+      { id: 8, day: 2, en: "It's a great way to <em>___</em>.", ko: "___ 하기 정말 좋은 방법이에요.", ex: [{ ko: "스트레스 해소", en: "It's a great way to relieve stress." }, { ko: "새로운 사람", en: "It's a great way to meet new people." }, { ko: "건강 유지", en: "It's a great way to stay healthy." }] },
+      { id: 9, day: 2, en: "I feel <em>___</em> when I do this.", ko: "이것을 할 때 ___ 기분이 들어요.", ex: [{ ko: "기운이 나는", en: "I feel energized when I do this." }, { ko: "평온한", en: "I feel peaceful when I do this." }, { ko: "성취감을 느끼는", en: "I feel a sense of accomplishment when I do this." }] },
+      { id: 10, day: 2, en: "The best thing about it is <em>___</em>.", ko: "그것의 가장 좋은 점은 ___ 입니다.", ex: [{ ko: "접근성", en: "The best thing about it is that it's very accessible." }, { ko: "비용 무", en: "The best thing about it is that it costs nothing." }, { ko: "분위기", en: "The best thing about it is the cozy atmosphere." }] },
+      { id: 11, day: 2, en: "I am very interested in <em>___</em>.", ko: "저는 ___ 에 관심이 많습니다.", ex: [{ ko: "기술", en: "I am very interested in the latest technology." }, { ko: "문화", en: "I am very interested in foreign cultures." }, { ko: "환경", en: "I am very interested in environmental protection." }] },
+      { id: 12, day: 2, en: "It makes me feel <em>___</em>.", ko: "그것은 저를 ___ 하게 만들어요.", ex: [{ ko: "행복", en: "It makes me feel happy and content." }, { ko: "자신감", en: "It makes me feel more confident." }, { ko: "동기부여", en: "It makes me feel motivated." }] },
+      { id: 13, day: 2, en: "I find it very <em>___</em>.", ko: "저는 그것이 매우 ___ 하다고 생각해요.", ex: [{ ko: "흥미로운", en: "I find it very fascinating." }, { ko: "보람찬", en: "I find it very rewarding." }, { ko: "도전적인", en: "I find it very challenging." }] },
+      { id: 14, day: 2, en: "I can't help but <em>___</em>.", ko: "___ 하지 않을 수 없어요.", ex: [{ ko: "웃음", en: "I can't help but smile." }, { ko: "동의", en: "I can't help but agree." }, { ko: "걱정", en: "I can't help but worry." }] },
+      { id: 15, day: 3, en: "Recently, I had an experience where <em>___</em>.", ko: "최근에 ___ 했던 경험이 있어요.", ex: [{ ko: "길을 잃다", en: "Recently, I had an experience where I got lost." }, { ko: "유명인을 보다", en: "Recently, I had an experience where I saw a celebrity." }, { ko: "실수를 하다", en: "Recently, I had an experience where I made a mistake." }] },
+      { id: 16, day: 3, en: "I remember a time when <em>___</em>.", ko: "___ 했던 때가 기억납니다.", ex: [{ ko: "해외 여행", en: "I remember a time when I traveled abroad." }, { ko: "비 오던 날", en: "I remember a time when it rained heavily." }, { ko: "다툰 일", en: "I remember a time when I had a fight." }] },
+      { id: 17, day: 3, en: "Out of nowhere, <em>___</em> happened.", ko: "갑자기 ___ 일이 일어났어요.", ex: [{ ko: "전화", en: "Out of nowhere, my phone started ringing." }, { ko: "타이어 펑크", en: "Out of nowhere, my car got a flat tire." }, { ko: "아이디어", en: "Out of nowhere, a great idea came to mind." }] },
+      { id: 18, day: 3, en: "What's trending these days is <em>___</em>.", ko: "요즘 유행하는 것은 ___ 입니다.", ex: [{ ko: "숏폼", en: "What's trending these days is watching short-form videos." }, { ko: "친환경", en: "What's trending these days is using eco-friendly products." }, { ko: "재택", en: "What's trending these days is working from home." }] },
+      { id: 19, day: 3, en: "People are more concerned about <em>___</em> now.", ko: "사람들은 이제 ___ 에 더 신경을 씁니다.", ex: [{ ko: "정신 건강", en: "People are more concerned about mental health now." }, { ko: "개인 정보", en: "People are more concerned about personal privacy now." }, { ko: "물가", en: "People are more concerned about rising prices now." }] },
+      { id: 20, day: 3, en: "I've noticed that many people <em>___</em>.", ko: "많은 사람들이 ___ 하는 것을 알아챘어요.", ex: [{ ko: "캠핑", en: "I've noticed that many people enjoy camping." }, { ko: "건강식", en: "I've noticed that many people eat healthy food." }, { ko: "투자", en: "I've noticed that many people invest in stocks." }] },
+      { id: 21, day: 3, en: "It was quite a <em>___</em> experience.", ko: "꽤나 ___ 한 경험이었어요.", ex: [{ ko: "당황", en: "It was quite an embarrassing experience." }, { ko: "신선", en: "It was quite a refreshing experience." }, { ko: "공포", en: "It was quite a scary experience." }] },
+      { id: 22, day: 4, en: "I prefer <em>___</em> over <em>___</em>.", ko: "저는 ___ 보다 ___ 를 선호해요.", ex: [{ ko: "차/커피", en: "I prefer tea over coffee in the morning." }, { ko: "겨울/여름", en: "I prefer winter over summer." }, { ko: "집/극장", en: "I prefer watching movies at home over going to the theater." }] },
+      { id: 23, day: 4, en: "If I had to choose, I would pick <em>___</em>.", ko: "선택해야 한다면, 저는 ___ 를 고르겠어요.", ex: [{ ko: "바다/산", en: "If I had to choose, I would pick the ocean." }, { ko: "의사", en: "If I had to choose, I would pick being a doctor." }, { ko: "아침형", en: "If I had to choose, I would pick being an early bird." }] },
+      { id: 24, day: 4, en: "There's a lot of debate about <em>___</em>.", ko: "___ 에 대해 많은 논란이 있습니다.", ex: [{ ko: "AI 윤리", en: "There's a lot of debate about the ethics of AI." }, { ko: "원격 수업", en: "There's a lot of debate about online classes." }, { ko: "마스크", en: "There's a lot of debate about wearing masks." }] },
+      { id: 25, day: 4, en: "One major problem we face is <em>___</em>.", ko: "우리가 직면한 주요 문제 중 하나는 ___ 입니다.", ex: [{ ko: "온난화", en: "One major problem we face is global warming." }, { ko: "실업", en: "One major problem we face is youth unemployment." }, { ko: "오염", en: "One major problem we face is plastic pollution." }] },
+      { id: 26, day: 4, en: "It's important to <em>___</em> for our future.", ko: "미래를 위해 ___ 하는 것이 중요합니다.", ex: [{ ko: "저축", en: "It's important to save money for our future." }, { ko: "기술", en: "It's important to learn new skills for our future." }, { ko: "지구", en: "It's important to protect the earth for our future." }] },
+      { id: 27, day: 4, en: "I strongly believe that <em>___</em>.", ko: "저는 ___ 라고 강력히 믿습니다.", ex: [{ ko: "교육", en: "I strongly believe that education is the key." }, { ko: "정직", en: "I strongly believe that honesty is the best policy." }, { ko: "평등", en: "I strongly believe that everyone should be equal." }] },
+      { id: 28, day: 4, en: "One advantage of <em>___</em> is convenience.", ko: "___ 의 장점 중 하나는 편리함이에요.", ex: [{ ko: "쇼핑", en: "One advantage of online shopping is convenience." }, { ko: "재택", en: "One advantage of working from home is convenience." }, { ko: "배달", en: "One advantage of using delivery apps is convenience." }] },
+      { id: 29, day: 5, en: "The main disadvantage of <em>___</em> is <em>___</em>.", ko: "___ 의 주된 단점은 ___ 입니다.", ex: [{ ko: "도시 소음", en: "The main disadvantage of the city is the noise." }, { ko: "폰 중독", en: "The main disadvantage of smartphones is addictiveness." }, { ko: "SNS 낭비", en: "The main disadvantage of SNS is time wasting." }] },
+      { id: 30, day: 5, en: "It has changed a lot compared to <em>___</em>.", ko: "___ 와 비교했을 때 정말 많이 변했어요.", ex: [{ ko: "10년 전", en: "It has changed a lot compared to ten years ago." }, { ko: "어린 시절", en: "It has changed a lot compared to my childhood." }, { ko: "작년", en: "It has changed a lot compared to last year." }] },
+      { id: 31, day: 5, en: "I used to <em>___</em>, but now I <em>___</em>.", ko: "전에는 ___ 하곤 했지만, 이제는 ___ 해요.", ex: [{ ko: "육식/채식", en: "I used to eat meat, but now I am a vegetarian." }, { ko: "늦잠/일찍", en: "I used to sleep in, but now I wake up early." }, { ko: "게임/운동", en: "I used to play games, but now I work out." }] },
+      { id: 32, day: 5, en: "The biggest change I've seen is <em>___</em>.", ko: "제가 본 가장 큰 변화는 ___ 입니다.", ex: [{ ko: "기술 발전", en: "The biggest change I've seen is the tech advancement." }, { ko: "가치관", en: "The biggest change I've seen is my perspective." }, { ko: "동네", en: "The biggest change I've seen is my neighborhood." }] },
+      { id: 33, day: 5, en: "It's not as <em>___</em> as it used to be.", ko: "예전만큼 ___ 하지 않아요.", ex: [{ ko: "유명", en: "It's not as popular as it used to be." }, { ko: "깨끗", en: "It's not as clean as it used to be." }, { ko: "조용", en: "It's not as quiet as it used to be." }] },
+      { id: 34, day: 5, en: "I've become more <em>___</em> lately.", ko: "최근에 더 ___ 해졌어요.", ex: [{ ko: "인내심", en: "I've become more patient lately." }, { ko: "건강 중시", en: "I've become more health-conscious lately." }, { ko: "긍정적", en: "I've become more positive lately." }] },
+      { id: 35, day: 5, en: "I regret <em>___</em>.", ko: "저는 ___ 을 후회합니다.", ex: [{ ko: "공부 안 한 것", en: "I regret not studying harder." }, { ko: "돈 쓴 것", en: "I regret spending too much money." }, { ko: "기회 놓친 것", en: "I regret missing that opportunity." }] },
+      { id: 36, day: 6, en: "To solve this problem, we need to <em>___</em>.", ko: "이 문제를 해결하기 위해 우리는 ___ 해야 합니다.", ex: [{ ko: "협력", en: "To solve this problem, we need to work together." }, { ko: "정책 변경", en: "To solve this problem, we need to change the policy." }, { ko: "의식 고취", en: "To solve this problem, we need to raise awareness." }] },
+      { id: 37, day: 6, en: "In the future, I hope to <em>___</em>.", ko: "미래에 저는 ___ 하기를 희망합니다.", ex: [{ ko: "여행", en: "In the future, I hope to travel the world." }, { ko: "사업", en: "In the future, I hope to start a business." }, { ko: "행복한 가정", en: "In the future, I hope to have a happy family." }] },
+      { id: 38, day: 6, en: "By 2030, technology will <em>___</em>.", ko: "2030년까지 기술은 ___ 할 것입니다.", ex: [{ ko: "자동화", en: "By 2030, technology will automate everything." }, { ko: "질병 정복", en: "By 2030, technology will cure most diseases." }, { ko: "우주 여행", en: "By 2030, technology will make space travel common." }] },
+      { id: 39, day: 6, en: "I am planning to <em>___</em> next year.", ko: "내년에 ___ 할 계획입니다.", ex: [{ ko: "이직", en: "I am planning to change my job next year." }, { ko: "언어 공부", en: "I am planning to learn a new language." }, { ko: "이사", en: "I am planning to move to a bigger house." }] },
+      { id: 40, day: 6, en: "The first thing I would do is <em>___</em>.", ko: "제가 가장 먼저 할 일은 ___ 입니다.", ex: [{ ko: "전화", en: "The first thing I would do is call my parents." }, { ko: "짐 싸기", en: "The first thing I would do is pack my bags." }, { ko: "계획", en: "The first thing I would do is make a plan." }] },
+      { id: 41, day: 6, en: "It's hard to predict <em>___</em>.", ko: "___ 을 예측하기는 어렵습니다.", ex: [{ ko: "날씨", en: "It's hard to predict the weather for tomorrow." }, { ko: "경제", en: "It's hard to predict the economic future." }, { ko: "승패", en: "It's hard to predict who will win." }] },
+      { id: 42, day: 6, en: "We must take action to <em>___</em>.", ko: "우리는 ___ 하기 위해 행동해야 합니다.", ex: [{ ko: "지구 보호", en: "We must take action to save the planet." }, { ko: "빈곤 퇴치", en: "We must take action to end poverty." }, { ko: "법 준수", en: "We must take action to follow the law." }] },
+      { id: 43, day: 7, en: "Hello, I'm calling to <em>___</em>.", ko: "안녕하세요, ___ 하려고 전화드렸어요.", ex: [{ ko: "예약", en: "Hello, I'm calling to make a reservation." }, { ko: "문의", en: "Hello, I'm calling to inquire about the item." }, { ko: "취소", en: "Hello, I'm calling to cancel my appointment." }] },
+      { id: 44, day: 7, en: "I'd like to ask a few questions about <em>___</em>.", ko: "___ 에 대해 몇 가지 여쭤보고 싶습니다.", ex: [{ ko: "입장료", en: "I'd like to ask a few questions about the fee." }, { ko: "규정", en: "I'd like to ask a few questions about the rules." }, { ko: "영업 시간", en: "I'd like to ask a few questions about your hours." }] },
+      { id: 45, day: 7, en: "Could you tell me more about <em>___</em>?", ko: "___ 에 대해 더 자세히 말씀해 주시겠어요?", ex: [{ ko: "상세 내용", en: "Could you tell me more about the details?" }, { ko: "혜택", en: "Could you tell me more about the benefits?" }, { ko: "위치", en: "Could you tell me more about the location." }] },
+      { id: 46, day: 7, en: "I was wondering if <em>___</em>.", ko: "혹시 ___ 인지 궁금합니다.", ex: [{ ko: "좌석 유무", en: "I was wondering if there are any seats left." }, { ko: "주차 가능", en: "I was wondering if parking is available." }, { ko: "카드 결제", en: "I was wondering if you accept credit cards." }] },
+      { id: 47, day: 7, en: "What are the options for <em>___</em>?", ko: "___ 에 대해 어떤 선택지들이 있나요?", ex: [{ ko: "배송 방법", en: "What are the options for the shipping method?" }, { ko: "메뉴 종류", en: "What are the options for the lunch menu?" }, { ko: "요금제", en: "What are the options for the monthly plan?" }] },
+      { id: 48, day: 7, en: "Is it possible to <em>___</em>?", ko: "___ 이 가능한가요?", ex: [{ ko: "당일 예약", en: "Is it possible to make a same-day reservation?" }, { ko: "포장 주문", en: "Is it possible to order for takeout?" }, { ko: "할인 혜택", en: "Is it possible to get a student discount?" }] },
+      { id: 49, day: 7, en: "How long does it take to <em>___</em>?", ko: "___ 하는 데 얼마나 걸리나요?", ex: [{ ko: "거기 도착", en: "How long does it take to get there?" }, { ko: "수리 완료", en: "How long does it take to finish the repair?" }, { ko: "결과 통보", en: "How long does it take to get the results?" }] },
+      { id: 50, day: 8, en: "I'm sorry, but I have a problem with <em>___</em>.", ko: "죄송하지만, ___ 에 문제가 생겼어요.", ex: [{ ko: "예약 오류", en: "I'm sorry, but I have a problem with my reservation." }, { ko: "주문 누락", en: "I'm sorry, but I have a problem with the item." }, { ko: "인터넷", en: "I'm sorry, but I have a problem with my internet." }] },
+      { id: 51, day: 8, en: "I'd like to change my <em>___</em> to <em>___</em>.", ko: "제 ___ 을 ___ 로 바꾸고 싶어요.", ex: [{ ko: "날짜 변경", en: "I'd like to change my flight date to Friday." }, { ko: "메뉴 변경", en: "I'd like to change my order to a salad." }, { ko: "주소 변경", en: "I'd like to change my shipping address." }] },
+      { id: 52, day: 8, en: "Something is wrong with <em>___</em>.", ko: "___ 에 뭔가 문제가 있어요.", ex: [{ ko: "컴퓨터", en: "Something is wrong with my computer." }, { ko: "도어락", en: "Something is wrong with the door lock." }, { ko: "청구서", en: "Something is wrong with my bill." }] },
+      { id: 53, day: 8, en: "I cannot find <em>___</em> anywhere.", ko: "어디에서도 ___ 을 찾을 수 없어요.", ex: [{ ko: "지갑 유실", en: "I cannot find my wallet anywhere." }, { ko: "이름 누락", en: "I cannot find my name on the list." }, { ko: "리모컨", en: "I cannot find the TV remote anywhere." }] },
+      { id: 54, day: 8, en: "It seems like <em>___</em> is missing.", ko: "___ 이 누락된 것 같아요.", ex: [{ ko: "가방", en: "It seems like my bag is missing." }, { ko: "소스", en: "It seems like the sauce is missing." }, { ko: "서류", en: "It seems like a page is missing." }] },
+      { id: 55, day: 8, en: "Can you double-check <em>___</em> for me?", ko: "저를 위해 ___ 을 다시 한 번 확인해 주시겠어요?", ex: [{ ko: "명단 확인", en: "Can you double-check the reservation list?" }, { ko: "재고 유무", en: "Can you double-check the stock?" }, { ko: "메일 수신", en: "Can you double-check if you got my email?" }] },
+      { id: 56, day: 8, en: "I'm afraid I won't be able to <em>___</em>.", ko: "유감스럽게도 ___ 을 할 수 없을 것 같아요.", ex: [{ ko: "정시 도착", en: "I'm afraid I won't be able to arrive on time." }, { ko: "참석", en: "I'm afraid I won't be able to attend." }, { ko: "변제", en: "I'm afraid I won't be able to pay you back yet." }] },
+      { id: 57, day: 9, en: "Could you recommend <em>___</em>?", ko: "___ 을 추천해 주시겠어요?", ex: [{ ko: "근처 식당", en: "Could you recommend a good restaurant nearby?" }, { ko: "재미있는 영화", en: "Could you recommend an interesting movie?" }, { ko: "좋은 선물", en: "Could you recommend a good gift?" }] },
+      { id: 58, day: 9, en: "I'm looking for <em>___</em>.", ko: "저는 ___ 을 찾고 있습니다.", ex: [{ ko: "아르바이트", en: "I'm looking for a part-time job." }, { ko: "생일 선물", en: "I'm looking for a birthday present." }, { ko: "가장 가까운 역", en: "I'm looking for the nearest station." }] },
+      { id: 59, day: 9, en: "I'm having trouble with <em>___</em>.", ko: "___ 때문에 곤란을 겪고 있어요.", ex: [{ ko: "차 엔진", en: "I'm having trouble with my car lately." }, { ko: "숙제", en: "I'm having trouble with my homework." }, { ko: "이웃 소음", en: "I'm having trouble with the neighbor's noise." }] },
+      { id: 60, day: 9, en: "Is there any other way to <em>___</em>?", ko: "___ 할 수 있는 다른 방법이 있을까요?", ex: [{ ko: "할인", en: "Is there any other way to get a discount?" }, { ko: "이동 수단", en: "Is there any other way to get there?" }, { ko: "문제 해결", en: "Is there any other way to solve this?" }] },
+      { id: 61, day: 9, en: "I'll give you a call back once <em>___</em>.", ko: "___ 하면 다시 전화드릴게요.", ex: [{ ko: "스케줄 확인", en: "I'll give you a call back once I check my schedule." }, { ko: "집 도착", en: "I'll give you a call back once I get home." }, { ko: "회의 종료", en: "I'll give you a call back once the meeting is over." }] },
+      { id: 62, day: 9, en: "Could you please <em>___</em> instead?", ko: "대신 ___ 해 주시겠어요?", ex: [{ ko: "문자", en: "Could you please send me a text instead?" }, { ko: "환불", en: "Could you please process a refund instead?" }, { ko: "나중에 통화", en: "Could you please call me back later instead?" }] },
+      { id: 63, day: 9, en: "I'm really sorry for <em>___</em>.", ko: "___ 해서 정말 죄송합니다.", ex: [{ ko: "지각", en: "I'm really sorry for being late." }, { ko: "불편", en: "I'm really sorry for causing any inconvenience." }, { ko: "대기", en: "I'm really sorry for making you wait." }] },
+      { id: 64, day: 10, en: "In conclusion, <em>___</em> is <em>___</em>.", ko: "결론적으로, ___ 은 ___ 입니다.", ex: [{ ko: "규칙적 운동/필수", en: "In conclusion, regular exercise is essential for health." }, { ko: "도전/나의 꿈", en: "In conclusion, my dream is to keep challenging myself." }, { ko: "영화/최고", en: "In conclusion, this movie is the best one ever." }] },
+      { id: 65, day: 10, en: "That's all I have to say about <em>___</em>.", ko: "___ 에 대해 제가 드릴 말씀은 여기까지입니다.", ex: [{ ko: "개인 취미", en: "That's all I have to say about my personal hobbies." }, { ko: "사건의 전말", en: "That's all I have to say about this incident." }, { ko: "나의 계획", en: "That's all I have to say about my future plans." }] },
+      { id: 66, day: 10, en: "Thank you for listening to <em>___</em>.", ko: "___ 을 들어주셔서 감사합니다.", ex: [{ ko: "나의 이야기", en: "Thank you for listening to my story." }, { ko: "오늘의 발표", en: "Thank you for listening to my presentation." }, { ko: "나의 변명", en: "Thank you for listening to my explanation." }] },
+      { id: 67, day: 10, en: "I hope this answers your <em>___</em>.", ko: "이것이 당신의 ___ 에 답이 되길 바랍니다.", ex: [{ ko: "질문", en: "I hope this answers your questions." }, { ko: "우려", en: "I hope this answers your concerns." }, { ko: "호기심", en: "I hope this answers your curiosity." }] },
+      { id: 68, day: 10, en: "Looking forward to <em>___</em>.", ko: "___ 을 기대하고 있습니다.", ex: [{ ko: "당신의 답장", en: "Looking forward to hearing from you soon." }, { ko: "다음 미팅", en: "Looking forward to our meeting next week." }, { ko: "좋은 소식", en: "Looking forward to some good news." }] },
+      { id: 69, day: 10, en: "It was a pleasure <em>___</em>.", ko: "___ 해서 즐거웠습니다.", ex: [{ ko: "만남", en: "It was a pleasure meeting you today." }, { ko: "함께 일함", en: "It was a pleasure working with you." }, { ko: "대화 나눔", en: "It was a pleasure talking to you." }] },
+      { id: 70, day: 10, en: "Have a wonderful <em>___</em>!", ko: "멋진 ___ 보내세요!", ex: [{ ko: "가족과 주말", en: "Have a wonderful weekend with your family!" }, { ko: "하루", en: "Have a wonderful day ahead!" }, { ko: "파리 여행", en: "Have a wonderful trip to Paris!" }] },
+      { id: 71, day: 10, en: "Feel free to <em>___</em> anytime.", ko: "언제든지 편하게 ___ 하세요.", ex: [{ ko: "도움 요청 전화", en: "Feel free to call me anytime you need help." }, { ko: "질문", en: "Feel free to ask questions anytime." }, { ko: "사무실 방문", en: "Feel free to visit our office anytime." }] },
+      { id: 72, day: 10, en: "That's it for <em>___</em>. Thanks!", ko: "___ 은 이게 다입니다. 고마워요!", ex: [{ ko: "오늘 수업", en: "That's it for today's lesson. Thanks!" }, { ko: "나의 답변", en: "That's it for my answer to the task. Thanks!" }, { ko: "지금까지", en: "That's it for now. Thanks!" }] }
+    ];
 
-                    function toggleReveal(idx, e) {
-                        if (e) e.stopPropagation();
-                        const next = new Set(revealed);
-                        if (next.has(idx)) next.delete(idx);
-                        else next.add(idx);
-                        setRevealed(next);
-                    }
+    const state = {
+      day: 1,
+      index: 0,
+      flipped: false,
+      marks: new Set(),
+      revealed: new Set()
+    };
 
-                    async function callGemini(prompt, isJson = false) {
-                        const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-                        let retries = 0;
-                        while (retries < 5) {
-                            try {
-                                const res = await fetch(url, {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({
-                                        contents: [
-                                            { parts: [{ text: prompt }] },
-                                        ],
-                                        generationConfig: isJson
-                                            ? {
-                                                  responseMimeType:
-                                                      "application/json",
-                                              }
-                                            : {},
-                                    }),
-                                });
-                                const data = await res.json();
-                                return data.candidates?.[0]?.content?.parts?.[0]
-                                    ?.text;
-                            } catch (e) {
-                                retries++;
-                                await new Promise((r) =>
-                                    setTimeout(r, Math.pow(2, retries) * 1000),
-                                );
-                            }
-                        }
-                        throw new Error("API Connection Failed");
-                    }
+    const $dayNav = document.getElementById('dayNav');
+    const $mainArea = document.getElementById('mainArea');
+    const $infoTitle = document.getElementById('infoTitle');
+    const $countText = document.getElementById('countText');
+    const $progressBar = document.getElementById('progressBar');
+    const $favBtn = document.getElementById('favBtn');
+    const $favCount = document.getElementById('favCount');
+    const $prevBtn = document.getElementById('prevBtn');
+    const $nextBtn = document.getElementById('nextBtn');
 
-                    async function handleParaphrase(e) {
-                        if (e) e.stopPropagation();
-                        setIsAiLoading(true);
-                        setAiResult(null);
-                        try {
-                            const cleanPattern = card.en.replace(
-                                /<[^>]*>?/gm,
-                                "",
-                            );
-                            const prompt = `OPIc English pattern: "${cleanPattern}". Provide 3 variations: 1. Casual (friends). 2. Formal. 3. Native idiomatic. JSON format: {"casual": "...", "formal": "...", "idiomatic": "..."}`;
-                            const res = await callGemini(prompt, true);
-                            setAiResult({
-                                type: "paraphrase",
-                                data: JSON.parse(res),
-                            });
-                        } catch (err) {
-                            console.error(err);
-                        } finally {
-                            setIsAiLoading(false);
-                        }
-                    }
+    function getCurrentList() {
+      if (state.day === 'fav') return DATA.filter(v => state.marks.has(v.id));
+      return DATA.filter(v => v.day === state.day);
+    }
 
-                    async function handleGetTips(e) {
-                        if (e) e.stopPropagation();
-                        setIsAiLoading(true);
-                        setAiResult(null);
-                        try {
-                            const cleanPattern = card.en.replace(
-                                /<[^>]*>?/gm,
-                                "",
-                            );
-                            const prompt = `OPIc pattern "${cleanPattern}". 고득점 AL을 위한 꿀팁 3가지를 한국어로 요약해줘. JSON: {"tips": ["...", "...", "..."]}`;
-                            const res = await callGemini(prompt, true);
-                            setAiResult({
-                                type: "tips",
-                                data: JSON.parse(res),
-                            });
-                        } catch (err) {
-                            console.error(err);
-                        } finally {
-                            setIsAiLoading(false);
-                        }
-                    }
+    function getCard() {
+      const list = getCurrentList();
+      return list[state.index] || DATA[0];
+    }
 
-                    async function handleTTS(e, text) {
-                        if (e) e.stopPropagation();
-                        if (isSpeaking) return;
-                        setIsSpeaking(true);
-                        try {
-                            const res = await fetch(
-                                `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key=${apiKey}`,
-                                {
-                                    method: "POST",
-                                    headers: {
-                                        "Content-Type": "application/json",
-                                    },
-                                    body: JSON.stringify({
-                                        contents: [
-                                            {
-                                                parts: [
-                                                    {
-                                                        text: `Read naturally: ${text}`,
-                                                    },
-                                                ],
-                                            },
-                                        ],
-                                        generationConfig: {
-                                            responseModalities: ["AUDIO"],
-                                            speechConfig: {
-                                                voiceConfig: {
-                                                    prebuiltVoiceConfig: {
-                                                        voiceName: "Kore",
-                                                    },
-                                                },
-                                            },
-                                        },
-                                    }),
-                                },
-                            );
-                            const data = await res.json();
-                            const pcmBase64 =
-                                data.candidates[0].content.parts[0].inlineData
-                                    .data;
-                            const sampleRate = parseInt(
-                                data.candidates[0].content.parts[0].inlineData.mimeType.match(
-                                    /rate=(\d+)/,
-                                )[1],
-                            );
-                            const bin = window.atob(pcmBase64);
-                            const bytes = new Uint8Array(bin.length);
-                            for (let i = 0; i < bin.length; i++)
-                                bytes[i] = bin.charCodeAt(i);
-                            const wav = pcmToWav(
-                                new Int16Array(bytes.buffer),
-                                sampleRate,
-                            );
-                            const audio = new Audio(
-                                URL.createObjectURL(
-                                    new Blob([wav], { type: "audio/wav" }),
-                                ),
-                            );
-                            audio.play();
-                            audio.onended = () => setIsSpeaking(false);
-                        } catch (err) {
-                            console.error(err);
-                            setIsSpeaking(false);
-                        }
-                    }
+    function setDay(day) {
+      state.day = day;
+      state.index = 0;
+      state.flipped = false;
+      state.revealed = new Set();
+      render();
+    }
 
-                    return (
-                        <div className="min-h-screen bg-slate-50 text-slate-900 p-4 pb-28 md:p-8 font-sans">
-                            <div className="max-w-xl mx-auto">
-                                {/* Header */}
-                                <header className="flex justify-between items-center mb-6">
-                                    <div className="flex items-center gap-3">
-                                        <div className="bg-emerald-600 p-2.5 rounded-2xl text-white shadow-lg">
-                                            <GraduationIcon />
-                                        </div>
-                                        <h1 className="text-2xl font-black italic tracking-tighter">
-                                            OPIc 72{" "}
-                                            <span className="text-emerald-600">
-                                                JOON AI
-                                            </span>
-                                        </h1>
-                                    </div>
-                                    <button
-                                        onClick={() => {
-                                            setDay("fav");
-                                            setIndex(0);
-                                            setFlipped(false);
-                                        }}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-full font-bold transition-all border ${day === "fav" ? "bg-yellow-400 text-white border-yellow-300" : "bg-white text-slate-400 border-slate-100"}`}
-                                    >
-                                        <StarIcon
-                                            fill={
-                                                day === "fav"
-                                                    ? "currentColor"
-                                                    : "none"
-                                            }
-                                        />
-                                        <span>★ {marks.size}</span>
-                                    </button>
-                                </header>
+    function move(dir) {
+      const list = getCurrentList();
+      const next = state.index + dir;
+      if (next >= 0 && next < list.length) {
+        state.index = next;
+        state.flipped = false;
+        state.revealed = new Set();
+        render();
+      }
+    }
 
-                                {/* Nav */}
-                                <nav className="flex gap-2 overflow-x-auto pb-4 no-scrollbar mb-6 scroll-smooth">
-                                    {DAY_TITLES.map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => {
-                                                setDay(i + 1);
-                                                setIndex(0);
-                                                setFlipped(false);
-                                                setAiResult(null);
-                                            }}
-                                            className={`shrink-0 px-5 py-2.5 rounded-2xl font-black text-sm transition-all shadow-sm ${day === i + 1 ? "bg-slate-800 text-white" : "bg-white text-slate-500 border border-slate-100 hover:bg-emerald-50"}`}
-                                        >
-                                            D-{i + 1}
-                                        </button>
-                                    ))}
-                                </nav>
+    function toggleMark(id) {
+      if (state.marks.has(id)) state.marks.delete(id);
+      else state.marks.add(id);
+      if (state.day === 'fav') {
+        const list = getCurrentList();
+        if (state.index > Math.max(0, list.length - 1)) state.index = Math.max(0, list.length - 1);
+      }
+      render();
+    }
 
-                                {/* Session Info */}
-                                <div className="bg-white p-5 rounded-3xl shadow-sm mb-6 border border-slate-100">
-                                    <div className="flex justify-between items-end mb-3">
-                                        <div>
-                                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">
-                                                Session
-                                            </p>
-                                            <h2 className="text-lg font-black text-slate-800">
-                                                {day === "fav"
-                                                    ? "오답/중요 노트"
-                                                    : `DAY ${day}: ${DAY_TITLES[day - 1]}`}
-                                            </h2>
-                                        </div>
-                                        <span className="text-sm font-black text-slate-400">
-                                            {index + 1} / {currentList.length}
-                                        </span>
-                                    </div>
-                                    <div className="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                        <div
-                                            className="bg-emerald-500 h-full transition-all duration-700"
-                                            style={{ width: `${progress}%` }}
-                                        ></div>
-                                    </div>
-                                </div>
+    function toggleReveal(i) {
+      if (state.revealed.has(i)) state.revealed.delete(i);
+      else state.revealed.add(i);
+      renderCardOnly();
+    }
 
-                                {/* Flashcard */}
-                                <div className="relative h-[620px] w-full perspective-1000 group mb-6">
-                                    {currentList.length > 0 ? (
-                                        <div
-                                            onClick={() => setFlipped(!flipped)}
-                                            className={`relative w-full h-full transition-transform duration-700 transform-style-3d cursor-pointer ${flipped ? "rotate-y-180" : ""}`}
-                                        >
-                                            <div className="absolute inset-0 backface-hidden bg-white rounded-[2.5rem] shadow-xl border p-10 text-center flex flex-col justify-center items-center">
-                                                <div className="absolute top-10 left-10">
-                                                    <div className="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-[10px] font-black">
-                                                        #
-                                                        {String(
-                                                            card.id,
-                                                        ).padStart(2, "0")}
-                                                    </div>
-                                                </div>
-                                                <h3
-                                                    className="text-3xl font-black text-slate-800 leading-tight mb-8"
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: card.en,
-                                                    }}
-                                                />
-                                                <p className="text-emerald-600 font-bold text-xl mb-12">
-                                                    {card.ko}
-                                                </p>
-                                                <div className="flex gap-3">
-                                                    <button
-                                                        onClick={(e) =>
-                                                            handleTTS(
-                                                                e,
-                                                                card.en.replace(
-                                                                    /<[^>]*>?/gm,
-                                                                    "",
-                                                                ),
-                                                            )
-                                                        }
-                                                        className="p-4 bg-emerald-50 text-emerald-600 rounded-full hover:bg-emerald-600 hover:text-white transition-all"
-                                                    >
-                                                        <VolumeIcon />
-                                                    </button>
-                                                    <button
-                                                        onClick={
-                                                            handleParaphrase
-                                                        }
-                                                        className="flex items-center gap-2 px-5 py-3 bg-indigo-50 text-indigo-600 rounded-full font-black text-xs hover:bg-indigo-600 hover:text-white transition-all shadow-md"
-                                                    >
-                                                        <SparklesIcon /> ✨ AI
-                                                        변형
-                                                    </button>
-                                                </div>
-                                                <div className="mt-16 text-slate-300 text-[10px] font-black tracking-widest animate-pulse uppercase">
-                                                    <RotateCwIcon /> Tap to Flip
-                                                </div>
-                                            </div>
-                                            <div className="absolute inset-0 backface-hidden bg-slate-900 rounded-[2.5rem] shadow-2xl p-6 flex flex-col rotate-y-180 overflow-y-auto custom-scrollbar">
-                                                <div className="flex justify-between items-start mb-6">
-                                                    <div className="flex-1 pr-4">
-                                                        <h3
-                                                            className="text-emerald-400 font-black text-xl mb-1 leading-tight"
-                                                            dangerouslySetInnerHTML={{
-                                                                __html: card.en,
-                                                            }}
-                                                        />
-                                                        <p className="text-slate-500 text-xs font-bold uppercase">
-                                                            {card.ko}
-                                                        </p>
-                                                    </div>
-                                                    <div className="flex flex-col gap-2">
-                                                        <button
-                                                            onClick={toggleMark}
-                                                            className={`p-3 rounded-2xl transition-all ${marks.has(card.id) ? "bg-yellow-400 text-white shadow-lg" : "bg-slate-800 text-slate-600 hover:text-white"}`}
-                                                        >
-                                                            <StarIcon
-                                                                fill={
-                                                                    marks.has(
-                                                                        card.id,
-                                                                    )
-                                                                        ? "currentColor"
-                                                                        : "none"
-                                                                }
-                                                            />
-                                                        </button>
-                                                        <button
-                                                            onClick={
-                                                                handleGetTips
-                                                            }
-                                                            className="p-3 bg-indigo-600 text-white rounded-2xl shadow-lg hover:bg-indigo-500 transition-all"
-                                                        >
-                                                            <MessageIcon />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div className="space-y-3.5 pb-4">
-                                                    {card.ex.map((item, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className="bg-slate-800/60 border border-slate-700/30 p-5 rounded-3xl transition-all relative"
-                                                        >
-                                                            <div className="flex justify-between items-center mb-3">
-                                                                <div className="flex items-center gap-2">
-                                                                    <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">
-                                                                        Ex{" "}
-                                                                        {i + 1}
-                                                                    </span>
-                                                                    <button
-                                                                        onClick={(
-                                                                            e,
-                                                                        ) =>
-                                                                            handleTTS(
-                                                                                e,
-                                                                                item.en,
-                                                                            )
-                                                                        }
-                                                                        className="text-slate-500 hover:text-emerald-400"
-                                                                    >
-                                                                        <VolumeIcon />
-                                                                    </button>
-                                                                </div>
-                                                                <button
-                                                                    onClick={(
-                                                                        e,
-                                                                    ) =>
-                                                                        toggleReveal(
-                                                                            i,
-                                                                            e,
-                                                                        )
-                                                                    }
-                                                                    className={`text-[10px] px-3 py-1.5 rounded-lg font-black transition-all ${revealed.has(i) ? "bg-slate-700 text-slate-400" : "bg-emerald-600 text-white"}`}
-                                                                >
-                                                                    {revealed.has(
-                                                                        i,
-                                                                    )
-                                                                        ? "숨기기"
-                                                                        : "정답 확인"}
-                                                                </button>
-                                                            </div>
-                                                            <p className="text-slate-100 font-bold mb-3">
-                                                                {item.ko}
-                                                            </p>
-                                                            {revealed.has(
-                                                                i,
-                                                            ) && (
-                                                                <div className="p-3.5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl animate-in fade-in slide-in-from-top-2 duration-300">
-                                                                    <p className="text-emerald-400 font-black leading-relaxed">
-                                                                        →{" "}
-                                                                        {
-                                                                            item.en
-                                                                        }
-                                                                    </p>
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    ))}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ) : (
-                                        <div className="w-full h-full bg-white rounded-[2.5rem] flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-slate-200">
-                                            <StarIcon fill="none" />
-                                            <h3 className="text-2xl font-black text-slate-800 mb-3 mt-4">
-                                                북마크된 문장이 없습니다
-                                            </h3>
-                                            <p className="text-slate-400 mb-10 leading-relaxed">
-                                                학습 중에 다시 보고 싶은 문장은
-                                                별표를 눌러 나만의 리스트를
-                                                만드세요.
-                                            </p>
-                                            <button
-                                                onClick={() => setDay(1)}
-                                                className="px-10 py-5 bg-slate-900 text-white rounded-[2rem] font-black shadow-xl"
-                                            >
-                                                Day 1로 가기
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
+    function escapeHtml(str) {
+      return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
 
-                                {/* AI Panel */}
-                                {(isAiLoading || aiResult) && (
-                                    <div className="bg-white rounded-3xl shadow-xl border border-indigo-100 p-6 mb-20 animate-in slide-in-from-bottom-5">
-                                        <div className="flex justify-between items-center mb-4">
-                                            <div className="flex items-center gap-2">
-                                                <SparklesIcon />
-                                                <h4 className="font-black text-indigo-950 uppercase text-xs">
-                                                    ✨ Gemini AI Result
-                                                </h4>
-                                            </div>
-                                            <button
-                                                onClick={() =>
-                                                    setAiResult(null)
-                                                }
-                                                className="text-slate-400 hover:text-slate-600"
-                                            >
-                                                <XIcon />
-                                            </button>
-                                        </div>
-                                        {isAiLoading ? (
-                                            <div className="space-y-3 py-4">
-                                                <div className="h-4 w-3/4 animate-shimmer rounded"></div>
-                                                <div className="h-4 w-full animate-shimmer rounded"></div>
-                                            </div>
-                                        ) : aiResult?.type === "paraphrase" ? (
-                                            <div className="space-y-4">
-                                                {Object.entries(
-                                                    aiResult.data,
-                                                ).map(([key, value]) => (
-                                                    <div key={key}>
-                                                        <div className="flex justify-between items-center mb-1">
-                                                            <span className="text-[10px] font-black uppercase text-indigo-400 tracking-wider italic">
-                                                                {key}
-                                                            </span>
-                                                            <button
-                                                                onClick={(e) =>
-                                                                    handleTTS(
-                                                                        e,
-                                                                        value,
-                                                                    )
-                                                                }
-                                                            >
-                                                                <VolumeIcon />
-                                                            </button>
-                                                        </div>
-                                                        <p className="text-slate-700 font-bold text-sm bg-indigo-50/50 p-3 rounded-xl border border-indigo-50 leading-relaxed">
-                                                            {value}
-                                                        </p>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-3">
-                                                {aiResult.data.tips.map(
-                                                    (tip, i) => (
-                                                        <div
-                                                            key={i}
-                                                            className="flex gap-3 items-start"
-                                                        >
-                                                            <CheckIcon />
-                                                            <p className="text-slate-700 text-sm font-medium leading-relaxed">
-                                                                {tip}
-                                                            </p>
-                                                        </div>
-                                                    ),
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
-                                )}
+    function renderDayNav() {
+      $dayNav.innerHTML = '';
+      DAY_TITLES.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'day-btn' + (state.day === i + 1 ? ' active' : '');
+        btn.textContent = `D-${i + 1}`;
+        btn.addEventListener('click', () => setDay(i + 1));
+        $dayNav.appendChild(btn);
+      });
+    }
 
-                                {/* Navigation */}
-                                <div className="fixed bottom-8 left-0 right-0 px-6 z-50">
-                                    <div className="max-w-md mx-auto flex gap-4">
-                                        <button
-                                            onClick={() => move(-1)}
-                                            disabled={
-                                                index === 0 ||
-                                                currentList.length === 0
-                                            }
-                                            className="flex-1 py-5 rounded-[2rem] shadow-2xl font-black transition-all flex items-center justify-center gap-2 active:scale-90 bg-white text-slate-800 border border-slate-200 disabled:bg-slate-100 disabled:text-slate-300"
-                                        >
-                                            <ChevronLeftIcon />
-                                        </button>
-                                        <button
-                                            onClick={() => move(1)}
-                                            disabled={
-                                                index ===
-                                                    currentList.length - 1 ||
-                                                currentList.length === 0
-                                            }
-                                            className="flex-[2] py-5 rounded-[2rem] shadow-2xl font-black transition-all flex items-center justify-center gap-3 active:scale-90 bg-emerald-600 text-white disabled:bg-slate-200"
-                                        >
-                                            다음 <ChevronRightIcon />
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    );
-                }
+    function renderCardOnly() {
+      const list = getCurrentList();
+      const card = getCard();
+      if (!list.length) {
+        $mainArea.innerHTML = `
+          <div class="empty">
+            <div class="empty-star">⭐</div>
+            <h3>북마크된 문장이 없습니다</h3>
+            <p>학습 중에 다시 보고 싶은 문장은<br>별표를 눌러 나만의 리스트를 만드세요.</p>
+            <button class="ghost-btn" type="button" id="goDay1">Day 1로 가기</button>
+          </div>
+        `;
+        document.getElementById('goDay1').addEventListener('click', () => setDay(1));
+        return;
+      }
 
-                const root = ReactDOM.createRoot(
-                    document.getElementById("root"),
-                );
-                root.render(<App />);
-            })();
-        </script>
-    </body>
+      const examplesHtml = card.ex.map((item, i) => `
+        <div class="example">
+          <div class="example-head">
+            <span class="example-label">Example ${i + 1}</span>
+            <button type="button" class="mini-btn ${state.revealed.has(i) ? 'muted' : ''}" data-reveal="${i}">
+              ${state.revealed.has(i) ? '숨기기' : '정답 확인'}
+            </button>
+          </div>
+          <p class="ko-example">${escapeHtml(item.ko)}</p>
+          ${state.revealed.has(i) ? `<div class="en-answer">→ ${escapeHtml(item.en)}</div>` : ''}
+        </div>
+      `).join('');
+
+      $mainArea.innerHTML = `
+        <div class="card-wrap">
+          <div id="flipCard" class="card-3d ${state.flipped ? 'flipped' : ''}">
+            <div class="card-face card-front">
+              <div class="front-tag">PATTERN #${String(card.id).padStart(2, '0')}</div>
+              <div class="focus">Sentence Focus</div>
+              <h3 class="en-main">${card.en}</h3>
+              <div class="divider"></div>
+              <div class="ko-main">${escapeHtml(card.ko)}</div>
+              <div class="tap-hint">↻ Tap To Check Examples</div>
+            </div>
+            <div class="card-face card-back">
+              <div class="between" style="align-items:flex-start; margin-bottom:18px; gap:14px;">
+                <div>
+                  <h3 class="back-title">${card.en}</h3>
+                  <div class="back-ko">${escapeHtml(card.ko)}</div>
+                </div>
+                <button type="button" id="markBtn" class="mark-btn ${state.marks.has(card.id) ? 'active' : ''}">${state.marks.has(card.id) ? '⭐' : '☆'}</button>
+              </div>
+              <div class="examples-title">실전 예문 연습 (3개)</div>
+              ${examplesHtml}
+            </div>
+          </div>
+        </div>
+      `;
+
+      const flipCard = document.getElementById('flipCard');
+      flipCard.addEventListener('click', () => {
+        state.flipped = !state.flipped;
+        renderCardOnly();
+      });
+
+      const markBtn = document.getElementById('markBtn');
+      if (markBtn) {
+        markBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleMark(card.id);
+        });
+      }
+
+      Array.from(document.querySelectorAll('[data-reveal]')).forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          toggleReveal(Number(btn.dataset.reveal));
+        });
+      });
+    }
+
+    function render() {
+      const list = getCurrentList();
+      if (state.index > Math.max(0, list.length - 1)) state.index = Math.max(0, list.length - 1);
+      const progress = list.length ? ((state.index + 1) / list.length) * 100 : 0;
+
+      renderDayNav();
+      renderCardOnly();
+
+      $infoTitle.textContent = state.day === 'fav' ? '오답/중요 노트' : `DAY ${state.day}: ${DAY_TITLES[state.day - 1]}`;
+      $countText.textContent = `${list.length ? state.index + 1 : 0} / ${list.length}`;
+      $progressBar.style.width = `${progress}%`;
+      $favCount.textContent = state.marks.size;
+      $favBtn.className = 'fav-btn' + (state.day === 'fav' ? ' active' : '');
+      $prevBtn.disabled = state.index === 0 || list.length === 0;
+      $nextBtn.disabled = state.index === list.length - 1 || list.length === 0;
+    }
+
+    $favBtn.addEventListener('click', () => setDay('fav'));
+    $prevBtn.addEventListener('click', () => move(-1));
+    $nextBtn.addEventListener('click', () => move(1));
+
+    render();
+  </script>
+</body>
 </html>
